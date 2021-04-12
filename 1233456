@@ -1,0 +1,41 @@
+import RPi.GPIO as GPIO
+import time
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+D = [26, 19, 13, 6, 5, 11, 9, 10]
+GPIO.setup(D,GPIO.OUT)
+
+def decToBinList(decNumber):
+    arr = [0 for _ in range(8)]
+    if decNumber == 0:
+        return arr
+    i = 0
+    while decNumber != 1:
+        arr[i] = decNumber % 2
+        decNumber = decNumber // 2
+        i += 1
+    arr[i] = (decNumber)
+    arr.reverse()
+    return arr
+
+def lightNumber(number):
+    arr = decToBinList(number)
+    for i in range(len(arr)):
+        GPIO.output(D[i], arr[i])
+
+D = [26, 19, 13, 6, 5, 11, 9, 10]
+
+def num2dac(value):
+    N = [0, 0, 0, 0, 0, 0, 0, 0]
+    N = lightNumber(value)
+
+try:
+    n = int(input("Number:"))
+    while n != 1:
+        num2dac(n)
+        print(f"напряжение в вольтах: {round(n / 255 * 3.3, 1)}V\n")
+        n = int(input("Number:"))
+except:
+    print("invalid input")
+finally:
+    GPIO.cleanup()
